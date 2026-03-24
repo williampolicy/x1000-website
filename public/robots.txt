@@ -1,0 +1,12 @@
+# X1000.ai - The Leverage Operating System
+# https://x1000.ai
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://x1000.ai/sitemap.xml
+Sitemap: https://www.x1000.ai/sitemap.xml
+
+# Crawl-delay for bots
+Crawl-delay: 1

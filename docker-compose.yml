@@ -1,0 +1,65 @@
+# X1000.ai Docker Compose Configuration
+# V5.3 Ecosystem Standard Compliant
+# Document: STD-ECO-V5.3-20260317
+
+version: '3.8'
+
+services:
+  x1000-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: x1000_web
+    restart: unless-stopped
+
+    ports:
+      - "${PORT:-3000}:3000"
+
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      - HOSTNAME=0.0.0.0
+      - PORT=3000
+      - X1000_ECOSYSTEM_VERSION=5.3
+      - X1000_PROJECT_ID=x1000-web
+      - X1000_AUTH_URL=${X1000_AUTH_URL:-https://login.lighthope.ai}
+      - X1000_API_URL=${X1000_API_URL:-https://api.lighthope.ai}
+
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+        reservations:
+          memory: 512M
+
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+    networks:
+      - x1000-network
+
+    labels:
+      - "x1000.ecosystem=lighthope"
+      - "x1000.version=5.3"
+      - "x1000.project=x1000-web"
+      - "x1000.priority=P0"
+      - "x1000.stage=S4"
+      - "prometheus.scrape=true"
+      - "prometheus.port=3000"
+      - "prometheus.path=/api/metrics"
+
+networks:
+  x1000-network:
+    driver: bridge
+    name: x1000_network
